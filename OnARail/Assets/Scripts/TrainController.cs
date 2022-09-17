@@ -52,7 +52,7 @@ public class TrainController : MonoBehaviour
             foreach (Railway railway in currStation.GetConnections())
             {
                 Vector2 tempMove = railway.ClampVelocity(transform, rb.velocity);
-                if (Mathf.Abs(tempMove.magnitude) > Mathf.Abs(bestMove.magnitude))
+                if (tempMove.sqrMagnitude > bestMove.sqrMagnitude)
                 {
                     bestMove = tempMove;
                     bestRail = railway;
