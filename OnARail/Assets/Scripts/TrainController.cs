@@ -9,11 +9,11 @@ public class TrainController : MonoBehaviour
     private Station currStation;
     private Rigidbody2D rb;
     private Vector2 movement;
-    private Vector2 currVelocity;
     private bool atJunction;
 
     public float speed = 100f;
     public float smoothing = 0.05f;
+    public float rotationSpeed = 5f;
 
     // Start is called before the first frame update
     void Start()
@@ -30,15 +30,20 @@ public class TrainController : MonoBehaviour
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
 
-        // Clamp the position of the train between the endpoints of the railway
+        // rotate the train to match the rail
+        Quaternion rotationTarget = Quaternion.Euler(0, 0, Vector2.SignedAngle(Vector2.up, rb.velocity));
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, rotationSpeed * Time.deltaTime);
+
+        // clamp the position to be directly on the rail at all times
         currRailway.ClampPosition(transform);
     }
 
     void FixedUpdate()
     {        
         // move the train
-        rb.velocity = Vector2.SmoothDamp(rb.velocity, movement * speed * Time.fixedDeltaTime, ref currVelocity, smoothing);
+        rb.velocity = Vector2.Lerp(rb.velocity, movement * speed, smoothing * Time.fixedDeltaTime);
 
+        // adjust the velocity
         if (atJunction)
         {
             // if at a junction, choose the railway with the highest projection magnitude from the current station's railways
@@ -46,7 +51,7 @@ public class TrainController : MonoBehaviour
             Railway bestRail = currRailway;
             foreach (Railway railway in currStation.GetConnections())
             {
-                Vector2 tempMove = Vector3.Project(rb.velocity, railway.GetDirectionVector());
+                Vector2 tempMove = railway.ClampVelocity(transform, rb.velocity);
                 if (Mathf.Abs(tempMove.magnitude) > Mathf.Abs(bestMove.magnitude))
                 {
                     bestMove = tempMove;
@@ -58,7 +63,7 @@ public class TrainController : MonoBehaviour
         }
         else
         {
-            rb.velocity = Vector3.Project(rb.velocity, currRailway.GetDirectionVector());
+            rb.velocity = currRailway.ClampVelocity(transform, rb.velocity);
         }
     }
 
