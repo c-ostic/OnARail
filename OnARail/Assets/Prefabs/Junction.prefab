@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 2388743617510794186}
   - component: {fileID: 5828103509630919375}
-  - component: {fileID: 8709092048159571441}
   - component: {fileID: 6807250980092522996}
   - component: {fileID: 4739391749191287224}
+  - component: {fileID: 8796497060570412575}
   m_Layer: 0
-  m_Name: Station
+  m_Name: Junction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,18 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8709092048159571441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3631013166378593187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce01545f337ee534a887f1ca099777b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!58 &6807250980092522996
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -136,3 +124,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &8796497060570412575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3631013166378593187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c26c22edadbfd3241a4936ac3ae170c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

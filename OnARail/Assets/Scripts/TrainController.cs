@@ -6,7 +6,7 @@ using System.Linq;
 public class TrainController : MonoBehaviour
 {
     private Railway currRailway;
-    private Station currStation;
+    private Junction currJunction;
     private Rigidbody2D rb;
     private Vector2 movement;
     private bool atJunction;
@@ -20,9 +20,9 @@ public class TrainController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        currStation = FindObjectOfType<Station>();
-        transform.position = currStation.transform.position;
-        currRailway = currStation.GetConnections().First();
+        currJunction = FindObjectOfType<Junction>();
+        transform.position = currJunction.transform.position;
+        currRailway = currJunction.GetConnections().First();
     }
 
     private void Update()
@@ -44,10 +44,10 @@ public class TrainController : MonoBehaviour
         // adjust the velocity
         if (atJunction)
         {
-            // if at a junction, choose the railway with the highest projection magnitude from the current station's railways
+            // if at a junction, choose the railway with the highest projection magnitude from the current junction's railways
             Vector2 bestMove = Vector2.zero;
             Railway bestRail = currRailway;
-            foreach (Railway railway in currStation.GetConnections())
+            foreach (Railway railway in currJunction.GetConnections())
             {
                 Vector2 tempMove = railway.ClampVelocity(transform, movement * speed);
 
@@ -59,7 +59,7 @@ public class TrainController : MonoBehaviour
             }
             rb.velocity = bestMove;
             currRailway = bestRail;
-            rb.position = Vector2.Lerp(rb.position, currStation.transform.position, positionSmoothing * Time.fixedDeltaTime);
+            rb.position = Vector2.Lerp(rb.position, currJunction.transform.position, positionSmoothing * Time.fixedDeltaTime);
         }
         else
         {
@@ -68,9 +68,9 @@ public class TrainController : MonoBehaviour
         }
     }
 
-    public void SetJunction(bool isAtJunction, Station newStation = null)
+    public void SetJunction(bool isAtJunction, Junction newJunction = null)
     {
         atJunction = isAtJunction;
-        currStation = newStation;
+        currJunction = newJunction;
     }
 }

@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class Railway : MonoBehaviour
 {
-    private Vector2 direction, fromStation, toStation;
+    private Vector2 direction, fromJunction, toJunction;
     private LineRenderer line;
     private float maxX, maxY, minX, minY;
 
     public float positionThreshold = 0.005f;
 
-    // Initializes the Railway from the two endpoint stations
-    public void Init(Vector2 fromStation, Vector2 toStation)
+    // Initializes the Railway from the two endpoint Junctions
+    public void Init(Vector2 fromJunction, Vector2 toJunction)
     {
-        this.fromStation = fromStation;
-        this.toStation = toStation;
-        direction = toStation - fromStation;
+        this.fromJunction = fromJunction;
+        this.toJunction = toJunction;
+        direction = toJunction - fromJunction;
 
-        maxX = Mathf.Max(fromStation.x, toStation.x);
-        maxY = Mathf.Max(fromStation.y, toStation.y);
-        minX = Mathf.Min(fromStation.x, toStation.x);
-        minY = Mathf.Min(fromStation.y, toStation.y);
+        maxX = Mathf.Max(fromJunction.x, toJunction.x);
+        maxY = Mathf.Max(fromJunction.y, toJunction.y);
+        minX = Mathf.Min(fromJunction.x, toJunction.x);
+        minY = Mathf.Min(fromJunction.y, toJunction.y);
 
         line = GetComponent<LineRenderer>();
-        line.SetPositions(new Vector3[] {fromStation, toStation});
+        line.SetPositions(new Vector3[] {fromJunction, toJunction});
     }
 
     // Clamps the velocity to match the rail
@@ -31,23 +31,19 @@ public class Railway : MonoBehaviour
     {
         if (isOutsideBounds(transform))
         {
-            Debug.Log("Outside bounds of " + this.name);
             return Vector2.zero;
         }
 
-        if (Vector2.Dot(velocity, direction) > 0 && (toStation - (Vector2)transform.position).sqrMagnitude < positionThreshold)
+        if (Vector2.Dot(velocity, direction) > 0 && (toJunction - (Vector2)transform.position).sqrMagnitude < positionThreshold)
         {
-            Debug.Log("Reached toStation threshold of " + this.name);
             return Vector2.zero;
         }
-        else if(Vector2.Dot(velocity, direction) < 0 && (fromStation - (Vector2)transform.position).sqrMagnitude < positionThreshold)
+        else if(Vector2.Dot(velocity, direction) < 0 && (fromJunction - (Vector2)transform.position).sqrMagnitude < positionThreshold)
         {
-            Debug.Log("Reached fromStation threshold of " + this.name);
             return Vector2.zero;
         }
         else
         {
-            Debug.Log("On rail " + this.name);
             return Vector3.Project(velocity, direction);
         }
     }
@@ -59,8 +55,8 @@ public class Railway : MonoBehaviour
 
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            // x is closer to being correct, so correct y (using direction as slope and fromStation as the point)
-            float newY = (direction.y / direction.x) * (transform.position.x - fromStation.x) + fromStation.y;
+            // x is closer to being correct, so correct y (using direction as slope and fromJunction as the point)
+            float newY = (direction.y / direction.x) * (transform.position.x - fromJunction.x) + fromJunction.y;
 
             newPos = new Vector2(
                 Mathf.Clamp(transform.position.x, minX, maxX),
@@ -69,7 +65,7 @@ public class Railway : MonoBehaviour
         else
         {
             // y is closer to being correct, so correct x
-            float newX = (direction.x / direction.y) * (transform.position.y - fromStation.y) + fromStation.x;
+            float newX = (direction.x / direction.y) * (transform.position.y - fromJunction.y) + fromJunction.x;
 
             newPos = new Vector2(
                 Mathf.Clamp(newX, minX, maxX),
