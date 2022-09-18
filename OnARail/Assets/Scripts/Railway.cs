@@ -29,29 +29,40 @@ public class Railway : MonoBehaviour
     // Clamps the velocity to match the rail
     public Vector2 ClampVelocity(Transform transform, Vector2 velocity)
     {
+        if (isOutsideBounds(transform))
+        {
+            Debug.Log("Outside bounds of " + this.name);
+            return Vector2.zero;
+        }
+
         if (Vector2.Dot(velocity, direction) > 0 && (toStation - (Vector2)transform.position).sqrMagnitude < positionThreshold)
         {
+            Debug.Log("Reached toStation threshold of " + this.name);
             return Vector2.zero;
         }
         else if(Vector2.Dot(velocity, direction) < 0 && (fromStation - (Vector2)transform.position).sqrMagnitude < positionThreshold)
         {
+            Debug.Log("Reached fromStation threshold of " + this.name);
             return Vector2.zero;
         }
         else
         {
+            Debug.Log("On rail " + this.name);
             return Vector3.Project(velocity, direction);
         }
     }
 
     // Makes sure the transform is directly on the line
-    public void ClampPosition(Transform transform)
+    public Vector2 ClampPosition(Transform transform)
     {
+        Vector2 newPos;
+
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
             // x is closer to being correct, so correct y (using direction as slope and fromStation as the point)
             float newY = (direction.y / direction.x) * (transform.position.x - fromStation.x) + fromStation.y;
 
-            transform.position = new Vector2(
+            newPos = new Vector2(
                 Mathf.Clamp(transform.position.x, minX, maxX),
                 Mathf.Clamp(newY, minY, maxY));
         }
@@ -60,15 +71,29 @@ public class Railway : MonoBehaviour
             // y is closer to being correct, so correct x
             float newX = (direction.x / direction.y) * (transform.position.y - fromStation.y) + fromStation.x;
 
-            transform.position = new Vector2(
+            newPos = new Vector2(
                 Mathf.Clamp(newX, minX, maxX),
                 Mathf.Clamp(transform.position.y, minY, maxY));
         }
+
+        return newPos;
     }
 
     // Returns the direction vector of the railway (for projection of the train's velocity)
     public Vector2 GetDirectionVector()
     {
         return direction;
+    }
+
+    private bool isOutsideBounds(Transform transform)
+    {
+        if(transform.position.x > maxX + positionThreshold && transform.position.y > maxY + positionThreshold ||
+            transform.position.x < minX - positionThreshold && transform.position.y < minY - positionThreshold ||
+            transform.position.x > maxX + positionThreshold && transform.position.y < minY - positionThreshold ||
+            transform.position.x < minX - positionThreshold && transform.position.y > maxY + positionThreshold)
+        {
+            return true;
+        }
+        return false;
     }
 }
