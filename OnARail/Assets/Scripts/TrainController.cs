@@ -20,7 +20,10 @@ public class TrainController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        currJunction = FindObjectOfType<Junction>();
+
+        Junction[] allJunctions = FindObjectsOfType<Junction>();
+        currJunction = allJunctions[Random.Range(0, allJunctions.Length)];
+
         transform.position = currJunction.transform.position;
         currRailway = currJunction.GetConnections().First();
     }
