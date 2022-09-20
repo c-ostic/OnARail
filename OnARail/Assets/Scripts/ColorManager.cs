@@ -22,7 +22,7 @@ public class ColorManager : MonoBehaviour
     // Returns a random color from the list excluding any colors that were passed in
     public Color GetRandomColor(params Color[] exclude)
     {
-        int random = Random.Range(0, colors.Count);
+        int random = Random.Range(0, colors.Count - exclude.Length);
         return colors.Where(color => !exclude.Contains(color)).ToList()[random];
     }
 }
