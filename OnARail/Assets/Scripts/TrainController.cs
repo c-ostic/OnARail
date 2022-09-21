@@ -19,11 +19,14 @@ public class TrainController : MonoBehaviour
     private bool atJunction;
     private bool atStation;
     private List<Passenger> passengers = new List<Passenger>();
+    private ScoreController scoreController;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        scoreController = FindObjectOfType<ScoreController>();
 
         Junction[] allJunctions = FindObjectsOfType<Junction>();
         currJunction = allJunctions[Random.Range(0, allJunctions.Length)];
@@ -96,6 +99,9 @@ public class TrainController : MonoBehaviour
 
                 // and unload them to the station
                 currStation.UnloadPassenger(passenger);
+
+                // increase the score
+                scoreController.IncreaseScore();
             }
         }
     }
