@@ -38,7 +38,15 @@ public class Station : MonoBehaviour
         }
 
         // Remove same color passengers from the list
-        passengers.RemoveAll(passenger => passenger.GetDestination() == stationColor);
+        for(int i = passengers.Count() - 1;i >= 0;i--)
+        {
+            if(passengers[i].GetDestination() == stationColor)
+            {
+                Passenger passenger = passengers[i];
+                passengers.Remove(passenger);
+                Destroy(passenger.gameObject);
+            }
+        }
 
         DrawPassengers();
     }
@@ -58,5 +66,41 @@ public class Station : MonoBehaviour
     {
         stationColor = color;
         sprite.color = color;
+    }
+
+    public Color GetColor()
+    {
+        return stationColor;
+    }
+
+    // Returns the first passenger in the queue (list). If there are no passengers, return null
+    public Passenger LoadPassenger()
+    {
+        if(passengers.Count > 0)
+        {
+            Passenger passenger = passengers[0];
+            passengers.RemoveAt(0);
+            return passenger;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    // Accepts a passenger and adds it to the list
+    public void UnloadPassenger(Passenger passenger)
+    {
+        passengers.Add(passenger);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        collision.gameObject.GetComponent<TrainController>().SetStation(true, this);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        collision.gameObject.GetComponent<TrainController>().SetStation(false);
     }
 }
