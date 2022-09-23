@@ -16,6 +16,7 @@ public class TrainController : MonoBehaviour
     private Station currStation;
     private Rigidbody2D rb;
     private Vector2 movement;
+    private Quaternion lastRotation;
     private bool atJunction;
     private bool atStation;
     private List<Passenger> passengers = new List<Passenger>();
@@ -42,11 +43,23 @@ public class TrainController : MonoBehaviour
         movement.y = Input.GetAxisRaw("Vertical");
 
         // rotate the train to match the rail
-        Quaternion rotationTarget = Quaternion.Euler(0, 0, Vector2.SignedAngle(Vector2.up, rb.velocity));
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, rotationSpeed * Time.deltaTime);
+        Quaternion rotationTarget;
 
-        // if at a station, check for loading/unloading
-        if (atStation)
+        if (rb.velocity.magnitude > 0.01)
+        {
+            rotationTarget = Quaternion.Euler(0, 0, Vector2.SignedAngle(Vector2.up, rb.velocity));
+        }
+        else
+        {
+            // if the velocity is zero, use the last rotation
+            rotationTarget = lastRotation;
+        }
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, rotationSpeed * Time.deltaTime);
+        lastRotation = transform.rotation;
+
+        // if at a station (and the game is still running), check for loading/unloading
+        if (atStation && Time.timeScale > 0)
         {
             // Load passengers with left click
             if (Input.GetMouseButtonDown(0))
@@ -59,6 +72,37 @@ public class TrainController : MonoBehaviour
             {
                 UnloadPassengers();
             }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        // move the train
+        rb.velocity = Vector2.Lerp(rb.velocity, movement * speed, speedSmoothing * Time.fixedDeltaTime);
+
+        // adjust the velocity
+        if (atJunction)
+        {
+            // if at a junction, choose the railway with the highest projection magnitude from the current junction's railways
+            Vector2 bestMove = Vector2.zero;
+            Railway bestRail = currRailway;
+            foreach (Railway railway in currJunction.GetConnections())
+            {
+                Vector2 tempMove = railway.ClampVelocity(transform, movement * speed, atJunction);
+
+                if (tempMove.sqrMagnitude > bestMove.sqrMagnitude)
+                {
+                    bestMove = tempMove;
+                    bestRail = railway;
+                }
+            }
+            rb.velocity = bestMove;
+            currRailway = bestRail;
+        }
+        else
+        {
+            rb.velocity = currRailway.ClampVelocity(transform, rb.velocity, atJunction);
+            rb.position = Vector2.Lerp(rb.position, currRailway.ClampPosition(transform), positionSmoothing * Time.fixedDeltaTime);
         }
     }
 
@@ -103,38 +147,6 @@ public class TrainController : MonoBehaviour
                 // increase the score
                 scoreController.IncreaseScore();
             }
-        }
-    }
-
-    void FixedUpdate()
-    {        
-        // move the train
-        rb.velocity = Vector2.Lerp(rb.velocity, movement * speed, speedSmoothing * Time.fixedDeltaTime);
-
-        // adjust the velocity
-        if (atJunction)
-        {
-            // if at a junction, choose the railway with the highest projection magnitude from the current junction's railways
-            Vector2 bestMove = Vector2.zero;
-            Railway bestRail = currRailway;
-            foreach (Railway railway in currJunction.GetConnections())
-            {
-                Vector2 tempMove = railway.ClampVelocity(transform, movement * speed);
-
-                if (tempMove.sqrMagnitude > bestMove.sqrMagnitude)
-                {
-                    bestMove = tempMove;
-                    bestRail = railway;
-                }
-            }
-            rb.velocity = bestMove;
-            currRailway = bestRail;
-            rb.position = Vector2.Lerp(rb.position, currJunction.transform.position, positionSmoothing * Time.fixedDeltaTime);
-        }
-        else
-        {
-            rb.velocity = currRailway.ClampVelocity(transform, rb.velocity);
-            rb.position = Vector2.Lerp(rb.position, currRailway.ClampPosition(transform), positionSmoothing * Time.fixedDeltaTime);
         }
     }
 

@@ -12,20 +12,29 @@ public class Station : MonoBehaviour
     public float startingAngle = 90;
     public int direction = -1;
     public GameObject passengerPrefab;
+    public Transform stationArea;
+    public float areaScaleSmoothing;
 
     private Color stationColor;
     private List<Passenger> passengers = new List<Passenger>();
     private ColorManager colorManager;
     private SpriteRenderer sprite;
+    private Vector2 minAreaScale = new Vector2(0.1f, 0.1f);
+    private Vector2 maxAreaScale = new Vector2(3, 3);
+    private Vector2 currentAreaScale;
 
     private void Awake()
     {
         colorManager = FindObjectOfType<ColorManager>();
         sprite = GetComponent<SpriteRenderer>();
+        currentAreaScale = minAreaScale;
     }
 
     private void Update()
     {
+        // Update the size of the area indicator if needed
+        stationArea.localScale = Vector2.Lerp(stationArea.localScale, currentAreaScale, Time.deltaTime * areaScaleSmoothing);
+
         // Try to spawn a passenger
         if (passengers.Count < maxPassengers && Random.Range(0f, 1f) <= spawnChancePerSecond * Time.deltaTime)
         {
@@ -97,10 +106,12 @@ public class Station : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         collision.gameObject.GetComponent<TrainController>().SetStation(true, this);
+        currentAreaScale = maxAreaScale;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         collision.gameObject.GetComponent<TrainController>().SetStation(false);
+        currentAreaScale = minAreaScale;
     }
 }

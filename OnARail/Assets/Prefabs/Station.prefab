@@ -100,13 +100,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce01545f337ee534a887f1ca099777b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnChancePerSecond: 0.1
-  maxPassengers: 4
+  spawnChancePerSecond: 0.05
+  maxPassengers: 8
   spacingRadius: 1
   spacingAngle: 0.55
   startingAngle: 1.57
   direction: -1
   passengerPrefab: {fileID: 5777500267627192313, guid: 9752eff2b3b575d4d90e0ac2f81a549f, type: 3}
+  stationArea: {fileID: 4536760054872631340}
+  areaScaleSmoothing: 5
 --- !u!50 &3373908850782506279
 Rigidbody2D:
   serializedVersion: 4

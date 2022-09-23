@@ -13,7 +13,7 @@ public class RailwayManager : MonoBehaviour
         // Create a dictionary of junction based on their ids
         Dictionary<string, Junction> junctions = FindObjectsOfType<Junction>().ToDictionary(junction => junction.id);
 
-        // Create a dictionary of connections from the data
+        // Create a list of connections from the data (each connection is a string array)
         IEnumerable<string[]> allConnections = connectionData.text.Split("\n").Select(connectionLine => connectionLine.Split("//"));
 
         int railId = 1;

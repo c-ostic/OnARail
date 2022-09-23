@@ -8,8 +8,6 @@ public class Railway : MonoBehaviour
     private LineRenderer line;
     private float maxX, maxY, minX, minY;
 
-    public float positionThreshold = 0.005f;
-
     // Initializes the Railway from the two endpoint Junctions
     public void Init(Vector2 fromJunction, Vector2 toJunction)
     {
@@ -27,18 +25,15 @@ public class Railway : MonoBehaviour
     }
 
     // Clamps the velocity to match the rail
-    public Vector2 ClampVelocity(Transform transform, Vector2 velocity)
+    public Vector2 ClampVelocity(Transform transform, Vector2 velocity, bool isAtJunction)
     {
-        if (isOutsideBounds(transform))
+        if (isAtJunction && Vector2.Dot(velocity, direction) > 0 && 
+            Vector2.Distance(toJunction, transform.position) < Vector2.Distance(fromJunction, transform.position))
         {
             return Vector2.zero;
         }
-
-        if (Vector2.Dot(velocity, direction) > 0 && (toJunction - (Vector2)transform.position).sqrMagnitude < positionThreshold)
-        {
-            return Vector2.zero;
-        }
-        else if(Vector2.Dot(velocity, direction) < 0 && (fromJunction - (Vector2)transform.position).sqrMagnitude < positionThreshold)
+        else if(isAtJunction && Vector2.Dot(velocity, direction) < 0 && 
+            Vector2.Distance(toJunction, transform.position) > Vector2.Distance(fromJunction, transform.position))
         {
             return Vector2.zero;
         }
@@ -79,17 +74,5 @@ public class Railway : MonoBehaviour
     public Vector2 GetDirectionVector()
     {
         return direction;
-    }
-
-    private bool isOutsideBounds(Transform transform)
-    {
-        if(transform.position.x > maxX + positionThreshold && transform.position.y > maxY + positionThreshold ||
-            transform.position.x < minX - positionThreshold && transform.position.y < minY - positionThreshold ||
-            transform.position.x > maxX + positionThreshold && transform.position.y < minY - positionThreshold ||
-            transform.position.x < minX - positionThreshold && transform.position.y > maxY + positionThreshold)
-        {
-            return true;
-        }
-        return false;
     }
 }

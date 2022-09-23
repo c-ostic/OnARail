@@ -951,7 +951,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.25327522, g: 0.2538359, b: 0.254717, a: 0}
+  m_BackGroundColor: {r: 0.23584908, g: 0.23584908, b: 0.23584908, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1012,7 +1012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trainTransform: {fileID: 1026232904}
-  offset: {x: 0, y: 0, z: -10}
+  offset: {x: 0, y: 0, z: -15}
 --- !u!1 &525692534
 GameObject:
   m_ObjectHideFlags: 0
@@ -1516,10 +1516,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colors:
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0, g: 0.115719795, b: 1, a: 1}
+  - {r: 1, g: 0.058256004, b: 0, a: 1}
+  - {r: 0, g: 0.11764717, b: 1, a: 1}
   - {r: 0.27660847, g: 1, b: 0, a: 1}
-  - {r: 0.9811321, g: 0.5914499, b: 0, a: 1}
+  - {r: 1, g: 0.60400003, b: 0, a: 1}
   - {r: 0, g: 1, b: 0.88805056, a: 1}
 --- !u!4 &885628668
 Transform:
@@ -2851,4 +2851,4 @@ MonoBehaviour:
   timerBar: {fileID: 388780655}
   totalTime: 30
   baseScoreEffect: 5
-  scoreEffectMultipler: 0.95
+  scoreEffectMultipler: 0.98
