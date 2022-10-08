@@ -35,6 +35,12 @@ public class ScoreController : MonoBehaviour
         {
             EndGame();
         }
+
+        // check for quit input
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     private void EndGame()
